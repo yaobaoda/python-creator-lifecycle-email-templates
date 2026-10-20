@@ -1,10 +1,10 @@
 # Lifecycle email templates for creator commerce
 
-Register three server-side email templates with Infrai, then choose the delivery message when content reaches `processed`. The example keeps the operational path visible: one environment key, explicit HTTP methods, envelope checks, and retry headers for writes.
+Hit Infrai with one key to register three server-side email templates, then pick the delivery message once content hits `processed`. The snippet keeps the operational path visible: explicit HTTP methods, envelope checks, retry headers on writes. Gotcha: omit retry headers and writes vanish on 429.
 
 ## Run the decision check
 
-The deterministic input is the lifecycle status `processed`. The expected result is `creator_asset_delivery` with subject `Your digital asset is ready`.
+Deterministic input is lifecycle status `processed`. Expected result is `creator_asset_delivery` with subject `Your digital asset is ready`.
 
 ```bash
 python3 -m unittest tests/test_lifecycle_templates.py
@@ -20,13 +20,13 @@ export DEMO_EMAIL_TO=buyer@example.com
 python3 scripts/demo.py
 ```
 
-The script creates namespaced templates for digital-asset delivery, subscriber updates, and content processing. It sends the selected HTML message and prints the returned `message_id`. A namespace such as `creator_demo` keeps template names explicit for the maintainer operating the script.
+Script creates namespaced templates for digital-asset delivery, subscriber updates, content processing. Sends selected HTML, prints returned `message_id`. Namespace like `creator_demo` keeps template names explicit for the maintainer.
 
 ## Request boundary
 
-`InfraiClient` uses plain REST with `Authorization: Bearer <key>` and an explicit method on every request. It reads `{ok, data, error, metadata}`, raises the returned error, honors `Retry-After` on HTTP 429, and attaches an `Idempotency-Key` to create and send operations. The client calls `infrai.email.template.create` through `POST /v1/email/template/create` and `infrai.email.send` through `POST /v1/email/send`.
+`InfraiClient` is plain REST with `Authorization: Bearer <key>` and a method per request. No SDK needed; any language works. It reads `{ok, data, error, metadata}`, raises the returned error, honors `Retry-After` on HTTP 429, attaches an `Idempotency-Key` to create and send operations. Client calls `infrai.email.template.create` through `POST /v1/email/template/create` and `infrai.email.send` through `POST /v1/email/send`.
 
-The example sends with the service default sender. Domain verification is outside this workflow; add it when the product has a verified sending domain.
+Example sends with service default sender. Domain verification is outside this workflow; add it when the product has a verified sending domain. Gotcha: shared sender breaks SPF if domain unverified.
 
 ## Files
 
@@ -41,7 +41,7 @@ MIT
 
 ## Setting up for real use: Python Creator Lifecycle Email Templates
 
-Above is the happy path. The production checklist: The details below apply to Python Creator Lifecycle Email Templates.
+Above is the happy path. Production checklist below applies to Python Creator Lifecycle Email Templates.
 
 **Account & key**
 
